@@ -5,8 +5,9 @@
 use cortex_m_rt::entry;
 use panic_rtt_target as _;
 use stm32f1xx_hal::adc;
-use stm32f1xx_hal::pac;
-use stm32f1xx_hal::prelude::*;
+// use stm32f1xx_hal::pac;
+// use stm32f1xx_hal::prelude::*;
+use stm32f1xx_hal::{prelude::*, pac};
 use stm32f1xx_hal::serial::{Config, Serial};
 // use nb::block;
 use core::fmt::Write;
@@ -48,7 +49,9 @@ fn main() -> ! {
         &adc_clocks
     );
 
+
     let mut led = gpioc.pc13.into_push_pull_output(&mut gpioc.crh);
+    let mut led_2 = gpioc.pc15.into_push_pull_output(&mut gpioc.crh);
     
     loop {
         let data: u16 = adc1.read(&mut ch0).unwrap();
@@ -60,6 +63,7 @@ fn main() -> ! {
         // writeln!(serial, "Hello\r\n").unwrap();
         write!(serial, "Analog data = {}, voltage = {}.{:02}v\r\n", data, integer_part, decimal_part).unwrap();
         led.toggle();
+        led_2.toggle();
         delay.delay_ms(100_u16);
     }
 }
